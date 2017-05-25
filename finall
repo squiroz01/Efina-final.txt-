@@ -1,1 +1,32 @@
+  CREATE TABLE Sums
+(
+  BaseValue VARCHAR2(5) NOT NULL,
+  Result VARCHAR2(4000) NOT NULL
+);  
+ 
+CREATE OR REPLACE FUNCTION FindSum(numero IN NUMBER)
+RETURN VARCHAR IS
+   valorcalcular NUMBER := 0;
+BEGIN  
+    FOR i IN 0..numero  LOOP    
+      IF MOD(i, 3) = 0 OR MOD(i, 5) = 0 
+      THEN
+        valorcalcular := valorcalcular + i;
+      END IF;
+    END LOOP;
+    RETURN valorcalcular;
+EXCEPTION    
+  WHEN OTHERS THEN
+    RETURN 'ORA-0'||SUBSTR(SQLCODE,2,4);
+END;  
+ 
+CREATE OR REPLACE TRIGGER Trigger_Sums
+BEFORE INSERT ON Sums FOR EACH ROW 
+DECLARE
+  valorcalculado VARCHAR2(4000);
+BEGIN
+    valorcalculado := FindSum(:new.BaseValue);
+    :new.Result := valorcalculado;
+END;  
+
 
